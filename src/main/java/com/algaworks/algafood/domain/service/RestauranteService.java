@@ -30,7 +30,7 @@ public class RestauranteService {
 		return restauranteRepository.salvar(restaurante);
 	}
 	
-	public void excluir(@RequestBody Long restauranteId) {
+	public void excluir(Long restauranteId) {
 		try {
 			restauranteRepository.remover(restauranteId);
 		} catch(EmptyResultDataAccessException e){
