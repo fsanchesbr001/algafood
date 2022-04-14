@@ -8,6 +8,7 @@ import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Component;
 
+import com.algaworks.algafood.domain.exception.EntidadeNaoEncontradaException;
 import com.algaworks.algafood.domain.model.Cidade;
 import com.algaworks.algafood.domain.repository.CidadeRepository;
 
@@ -30,15 +31,21 @@ public class CidadeRepositoryImpl implements CidadeRepository{
 
 	@Override
 	public Cidade buscarPorId(Long id) {
-		return manager.find(Cidade.class, id);
+		Cidade cidade = manager.find(Cidade.class, id);
+		if(cidade == null) {
+			throw new EntidadeNaoEncontradaException(String.format("A cidade com Id=%d, não está cadastrada", id));
+		}
+		return cidade;
 	}
 	
 	@Transactional
 	@Override
-	public void remover(Cidade cidade) {
-		cidade = buscarPorId(cidade.getId());
+	public void remover(Long cidadeId) {
+		Cidade cidade = buscarPorId(cidadeId);
+		if(cidade==null) {
+			throw new EntidadeNaoEncontradaException(String.format("A cidade de Id=%d não está cadastrada.", cidadeId));
+		}
 		manager.remove(cidade);
-		
 	}
 
 }
