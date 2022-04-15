@@ -1,6 +1,7 @@
 package com.algaworks.algafood.api.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,15 +38,15 @@ public class RestauranteController {
 	
 	@GetMapping
 	public List<Restaurante> listar(){
-		return restauranteRepository.listar();
+		return restauranteRepository.findAll();
 	}
 	
 	@GetMapping("/{restauranteId}")
 	public ResponseEntity<Restaurante> buscarPorId(@PathVariable Long restauranteId) {
-		Restaurante restaurante = restauranteRepository.buscar(restauranteId);
+		Optional<Restaurante> restaurante = restauranteRepository.findById(restauranteId);
 		
-		if(restaurante!=null) {
-			return ResponseEntity.ok(restaurante);
+		if(restaurante.isPresent()) {
+			return ResponseEntity.ok(restaurante.get());
 		}
 		return ResponseEntity.noContent().build();
 	}
@@ -73,13 +74,13 @@ public class RestauranteController {
 	
 	@PutMapping("/{restauranteId}")
 	public ResponseEntity<?> atualizar(@PathVariable Long restauranteId, @RequestBody Restaurante restauranteInformado){
-		Restaurante restaurante =  restauranteRepository.buscar(restauranteId);
-		if(restaurante!=null) {
-			Cozinha cozinhaInformada=cozinhaRepository.buscar(restauranteInformado.getCozinha().getId());
-			if(cozinhaInformada!=null) {
-				BeanUtils.copyProperties(restauranteInformado, restaurante,"id");
-				restauranteRepository.salvar(restaurante);
-				return ResponseEntity.ok(restaurante);
+		Optional<Restaurante> restaurante =  restauranteRepository.findById(restauranteId);
+		if(restaurante.isPresent()) {
+			Optional<Cozinha> cozinhaInformada=cozinhaRepository.findById(restauranteInformado.getCozinha().getId());
+			if(cozinhaInformada.isPresent()) {
+				BeanUtils.copyProperties(restauranteInformado, restaurante.get(),"id");
+				restauranteRepository.save(restaurante.get());
+				return ResponseEntity.ok(restaurante.get());
 			}
 			else {
 				return ResponseEntity.badRequest().body(String.format(
