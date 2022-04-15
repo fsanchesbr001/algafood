@@ -1,6 +1,7 @@
 package com.algaworks.algafood.api.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.algaworks.algafood.domain.exception.EntidadeNaoEncontradaException;
 import com.algaworks.algafood.domain.model.Cidade;
+import com.algaworks.algafood.domain.model.Estado;
 import com.algaworks.algafood.domain.repository.CidadeRepository;
 import com.algaworks.algafood.domain.repository.EstadoRepository;
 import com.algaworks.algafood.domain.service.CidadeService;
@@ -36,14 +38,14 @@ public class CidadeController {
 	
 	@GetMapping
 	public List<Cidade> listar(){
-		return cidadeRepository.listar();
+		return cidadeRepository.findAll();
 	}
 	
 	@GetMapping("/{cidadeId}")
 	public ResponseEntity<?> buscarPorId(@PathVariable Long cidadeId){
 		try {
-			Cidade cidade = cidadeRepository.buscarPorId(cidadeId);
-			return ResponseEntity.ok().body(cidade);
+			Optional<Cidade> cidade = cidadeRepository.findById(cidadeId);
+			return ResponseEntity.ok().body(cidade.get());
 		} catch(EntidadeNaoEncontradaException e) {
 			return ResponseEntity.badRequest().body(e.getMessage());
 		}
@@ -72,11 +74,11 @@ public class CidadeController {
 	@PutMapping("/{cidadeId}")
 	public ResponseEntity<?> alterar(@PathVariable Long cidadeId,@RequestBody Cidade cidadeInformada){
 		try {
-			Cidade cidadeAtual = cidadeRepository.buscarPorId(cidadeId);
-			estadoRepository.buscarPorId(cidadeInformada.getEstado().getId());
-			BeanUtils.copyProperties(cidadeInformada, cidadeAtual,"id");
-			cidadeAtual= cidadeService.salvar(cidadeAtual);
-			return ResponseEntity.ok(cidadeAtual);
+			Optional<Cidade> cidadeAtual = cidadeRepository.findById(cidadeId);
+			Optional<Estado> estado=estadoRepository.findById(cidadeInformada.getEstado().getId());
+			BeanUtils.copyProperties(cidadeInformada, cidadeAtual.get(),"id");
+			Cidade cidade = cidadeService.salvar(cidadeAtual.get());
+			return ResponseEntity.ok(cidade);
 		} catch(EntidadeNaoEncontradaException e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
 		}
