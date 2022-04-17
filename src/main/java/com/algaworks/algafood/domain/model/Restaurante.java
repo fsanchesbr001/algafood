@@ -62,12 +62,12 @@ public class Restaurante {
 	
 	@CreationTimestamp
 	@Column(nullable = false,columnDefinition = "datetime")
-	@JsonIgnore
+	//@JsonIgnore
 	private LocalDateTime dataCadastro;
 	
 	@UpdateTimestamp
 	@Column(nullable = false,columnDefinition = "datetime")
-	@JsonIgnore
+	//@JsonIgnore
 	private LocalDateTime dataUltimaAtualizacao;
 	
 	
