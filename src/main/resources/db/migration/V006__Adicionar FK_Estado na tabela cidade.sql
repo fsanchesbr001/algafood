@@ -1,0 +1,1 @@
+ALTER TABLE `cidade`  ADD CONSTRAINT `fk_estado` FOREIGN KEY ( `estado_id` ) REFERENCES `estado` ( `id` ) ;
