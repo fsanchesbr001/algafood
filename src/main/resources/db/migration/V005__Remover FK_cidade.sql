@@ -1,0 +1,1 @@
+ALTER TABLE algafood.cidade DROP FOREIGN KEY cidade_FK;
