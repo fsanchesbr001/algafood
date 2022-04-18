@@ -1,17 +1,15 @@
 package com.algaworks.algafood.domain.model;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -21,30 +19,44 @@ import lombok.EqualsAndHashCode;
 @Entity
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class Usuario {
-
+public class Pedido {
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@EqualsAndHashCode.Include
 	private Long id;
 	
 	@Column(nullable = false)
-	private String nome;
+	private BigDecimal subtotal;
 	
 	@Column(nullable = false)
-	private String email;
+	private BigDecimal taxaFrete;
 	
 	@Column(nullable = false)
-	private String senha;
+	private BigDecimal valorTotal;
 	
+	@Column(nullable = false)
 	@CreationTimestamp
-	@Column(nullable = false,columnDefinition = "datetime")
-	private LocalDateTime dataCadastro;
+	private LocalDateTime dataCriacao;
 	
-	@ManyToMany
-	@JoinTable(name = "usuario_grupo",
-	joinColumns = @JoinColumn(name="usuario_id"),
-	inverseJoinColumns = @JoinColumn(name="grupo_id"))
-	private List<Grupo> grupos = new ArrayList<>();
-
+	private LocalDateTime dataConfirmacao;
+	
+	private LocalDateTime dataCancelamento;
+	
+	private LocalDateTime dataEntrega;
+	
+	@Column(nullable = false)
+	private String status;
+	
+	@Embedded
+	private Endereco endereco;
+	
+	@ManyToOne
+	private FormaPagamento formaPagamento;
+	
+	@ManyToOne
+	private Restaurante restaurante;
+	
+	@ManyToOne
+	private Usuario usuario;
 }
