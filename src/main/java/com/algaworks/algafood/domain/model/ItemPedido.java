@@ -36,6 +36,7 @@ public class ItemPedido {
 	private Produto produto;
 	
 	@ManyToOne
+	@Column(nullable = false)
 	private Pedido pedido;
 
 }
